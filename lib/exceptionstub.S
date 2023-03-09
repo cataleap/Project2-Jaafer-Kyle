@@ -186,9 +186,8 @@ do_context_switch_on_irq_return:
 	// Allocate space on stack for saving interrupted task's cpsr
 	sub	sp, sp, #4
 	// Save interrupted task's cpsr which is currently in spsr_irq 
-	// mrs r0, spsr // Uncomment this line after you have implemented all the TODOs in this file
-	// stmia sp, {r0} // Uncomment this line after you have implemented all the TODOs in this file
-	stmia	sp, {spsr_irq}
+	mrs r0, spsr // Uncomment this line after you have implemented all the TODOs in this file
+	stmia sp, {r0} // Uncomment this line after you have implemented all the TODOs in this file
 	
 	// Next, we call the function `ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub`
 	//   with one argument (passed in r0). The function requires that the argument passed in
