@@ -173,7 +173,7 @@ do_context_switch_on_irq_return:
 	// Allocate space on stack for saving interrupted task's r0-r14
 	sub	sp, sp, #60
 	// TODO: Save interrupted task's r0-r14 in alloated space
-	stmia	sp, {r0-r14}
+	stmia	sp, {r0-r14}^
 	// Allocate space on stack for saving interrupted task's d0-d15
 	sub	sp, sp, #128
 	// TODO: Save interrupted task's d0-d15 in alloated space
@@ -226,7 +226,7 @@ do_context_switch_on_irq_return:
 	add	sp, sp, #128
 
 	// TODO: Restore next task's r0-r14
-	ldmia	sp, {r0-r14}
+	ldmia	sp, {r0-r14}^
 	// Deallocate space previosuly allocated for saving r0-r14
 	add	sp, sp, #60
 
