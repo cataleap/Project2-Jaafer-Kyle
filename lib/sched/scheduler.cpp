@@ -482,15 +482,46 @@ void CScheduler::EnablePreemptiveMultitasking() {
 void ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub(TTaskRegisters* regs_saved_by_irq_stub) {
 	should_contextswith_on_irq_return = 0;
 	CScheduler* scheduler = CScheduler::Get();
-	CTask *pNext = scheduler->m_pCurrent;
+	// CTask *pNext = scheduler->m_pCurrent;
+	const char* temp = scheduler->m_pCurrent->GetName();
+	// Cooperative multitasking is disabled for project 2 because it requires
+	//   extra effort to make it compatible with preemptive multitasking
+	
+	while ((scheduler->m_nCurrent = scheduler->GetNextTask()) == MAX_TASKS)	// no task is ready
+	{
+		assert(scheduler->m_nTasks > 0);
+	}
 
+	assert (scheduler->m_nCurrent < MAX_TASKS);
+	CTask *pNext = scheduler->m_pTask[scheduler->m_nCurrent];
+	assert (pNext != 0);
+	if (scheduler->m_pCurrent == pNext)
+	{
+		return;
+	}
+	
+	TTaskRegisters *pOldRegs = scheduler->m_pCurrent->GetRegs ();
+	
+	scheduler->m_pCurrent = pNext;
+	TTaskRegisters *pNewRegs = scheduler->m_pCurrent->GetRegs ();
+
+	if (scheduler->m_pTaskSwitchHandler != 0)
+	{
+		(*scheduler->m_pTaskSwitchHandler) (scheduler->m_pCurrent);
+	}
+
+
+	assert (pOldRegs != 0);
+	assert (pNewRegs != 0);
+	pOldRegs = regs_saved_by_irq_stub;
+	regs_saved_by_irq_stub = pNewRegs;
 	// TODO: You should borrow all codes form Yield but make the following changes:
 	//   1. Use the variable `scheduler` above to fix any compilation errors.
 	//   2. At the end, **DO NOT** just call `TaskSwitch`. Instead, think about
 	//     how this function is supposed to assist the context switch in IRQStub (after you have
 	//     fully understood how IRQStub performs context switch), then write code here to
 	//     make the function do exactly what it is supposed to do.
-
-	CLogger::Get ()->Write (FromScheduler, LogDebug, "Current task is task %s, will switch to task %s.\n", scheduler->m_pCurrent->GetName(), pNext->GetName());
+	// scheduler->m_pCurrent->GetName()
+	CLogger::Get ()->Write (FromScheduler, LogDebug, "Current task is task %s, will switch to task %s.\n", temp, pNext->GetName());
 
 }

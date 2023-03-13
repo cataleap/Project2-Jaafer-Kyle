@@ -177,12 +177,14 @@ do_context_switch_on_irq_return:
 	// Allocate space on stack for saving interrupted task's d0-d15
 	sub	sp, sp, #128
 	// TODO: Save interrupted task's d0-d15 in alloated space
-	stmia	sp, {d0-d15}
+	vstmia sp, {d0-d15}
 
 	// Allocate space on stack for saving interrupted task's fpexc and fpscr.
 	sub	sp, sp, #8
 	// TODO: Save interrupted task's fpexc and fpscr in alloated space
-	stmia	sp, {fpexc, fpscr}
+	fmrx r0, fpexc
+	vmrs r1, fpscr
+	stmia	sp, {r0, r1}
 	// Allocate space on stack for saving interrupted task's cpsr
 	sub	sp, sp, #4
 	// Save interrupted task's cpsr which is currently in spsr_irq 
@@ -212,17 +214,19 @@ do_context_switch_on_irq_return:
 	// Deallocate space previosuly allocated for saving cpsr
 	add	sp, sp, #4
 	// TODO: Restore next task's fpexc and fpscr
-	ldmia	sp!, {fpscr, fpexc}
+	ldmia	sp!, {r0, r1}
+	vmsr fpscr, r1
+	fmxr fpexc, r0
 	// Deallocate space previosuly allocated for saving fpexc and fpscr
 	add	sp, sp, #8
 
 	// TODO: Restore next task's d0-d15
-	ldmia	sp!, {d0-d15}
+	vldmia	sp!, {d0-d15}
 	// Deallocate space previosuly allocated for saving d0-d15
 	add	sp, sp, #128
 
 	// TODO: Restore next task's r0-r14
-	ldmia	sp!, {r0-r14}
+	ldmia	sp, {r0-r14}
 	// Deallocate space previosuly allocated for saving r0-r14
 	add	sp, sp, #60
 
