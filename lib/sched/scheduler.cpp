@@ -513,8 +513,8 @@ void ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub(TTaskRegiste
 
 	assert (pOldRegs != 0);
 	assert (pNewRegs != 0);
-	pOldRegs = regs_saved_by_irq_stub;
-	regs_saved_by_irq_stub = pNewRegs;
+	*pOldRegs = *regs_saved_by_irq_stub;
+	*regs_saved_by_irq_stub = *pNewRegs;
 	// TODO: You should borrow all codes form Yield but make the following changes:
 	//   1. Use the variable `scheduler` above to fix any compilation errors.
 	//   2. At the end, **DO NOT** just call `TaskSwitch`. Instead, think about
