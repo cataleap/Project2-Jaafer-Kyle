@@ -214,14 +214,14 @@ do_context_switch_on_irq_return:
 	// Deallocate space previosuly allocated for saving cpsr
 	add	sp, sp, #4
 	// TODO: Restore next task's fpexc and fpscr
-	ldmia	sp!, {r0, r1}
+	ldmia	sp, {r0, r1}
 	vmsr fpscr, r1
 	fmxr fpexc, r0
 	// Deallocate space previosuly allocated for saving fpexc and fpscr
 	add	sp, sp, #8
 
 	// TODO: Restore next task's d0-d15
-	vldmia	sp!, {d0-d15}
+	vldmia	sp, {d0-d15}
 	// Deallocate space previosuly allocated for saving d0-d15
 	add	sp, sp, #128
 
